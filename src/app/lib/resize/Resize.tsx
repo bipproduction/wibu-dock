@@ -2,12 +2,16 @@
 "use client";
 import {
   ActionIcon,
+  Box,
   Center,
   Divider,
   Flex,
+  Image,
+  Loader,
   Stack,
   Text,
   TextInput,
+  Title,
   Tooltip
 } from "@mantine/core";
 import {
@@ -18,7 +22,7 @@ import {
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 import _ from "lodash";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AiOutlineBorderHorizontal,
   AiOutlineBorderVerticle,
@@ -278,6 +282,29 @@ export function WibuDock() {
   });
 
   const [keyId, setKeyId] = useState(_.random(1000, 9999));
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        // Misalkan, ukuran di bawah 1024px dianggap mobile
+        setIsDesktop(false);
+      } else {
+        setIsDesktop(true);
+      }
+    };
+
+    // Cek ukuran layar saat pertama kali dimuat
+    handleResize();
+
+    // Tambahkan event listener untuk memantau perubahan ukuran layar
+    window.addEventListener("resize", handleResize);
+
+    // Bersihkan event listener saat komponen di-unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useShallowEffect(() => {
     const load = setTimeout(() => {
@@ -302,6 +329,25 @@ export function WibuDock() {
     return (
       <Center>
         <Text>Loading...</Text>
+      </Center>
+    );
+  }
+
+  if (!isDesktop) {
+    return (
+      <Center p={"lg"}>
+        <Box w={"60%"}>
+          <Stack align="center" justify="center">
+            <Image 
+            radius={"lg"}
+              w={"100%"}
+              src={"/assets/desktop-only.png"}
+              alt="desktop-only"
+            />
+            <Title>DESKTOP ONLY! ...</Title>
+            <Loader />
+          </Stack>
+        </Box>
       </Center>
     );
   }
