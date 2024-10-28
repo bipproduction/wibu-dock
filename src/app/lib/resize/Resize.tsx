@@ -26,7 +26,6 @@ import {
   AiOutlineClose,
   AiOutlineEdit,
   AiOutlineEye,
-  AiOutlineFileAdd,
   AiOutlineRotateLeft,
   AiOutlineSplitCells
 } from "react-icons/ai";
