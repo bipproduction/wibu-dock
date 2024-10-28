@@ -3,22 +3,64 @@
 // All packages except `@mantine/hooks` require styles imports
 import "@mantine/core/styles.css";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
+  generator: 'Wibu Dock',
+  applicationName: 'Wibu Dock',
+  referrer: 'origin-when-cross-origin',
+  keywords: ['Next.js', 'React', 'JavaScript'],
+  metadataBase: new URL("https://wibu-dock.ravenstone.cloud"),
   title: "Wibu Dock",
   description: "Wibu Dock",
-  keywords: "Dock Station Wibu App", // Add relevant keywords
-  author: "Wibu Team", // Specify the author or company name
-  charset: "UTF-8", // Set the character encoding
-  ogTitle: "Wibu Dock", // Open Graph title
-  ogDescription: "Comprehensive Dock for Wibu web app.", // Open Graph description
-  ogUrl: "https://wibu-dock.ravenstone.cloud", // Your website URL
-  ogType: "website", // Open Graph type
-  ogSiteName: "Wibu Dock",
-  twitterSite: "@yourTwitterHandle", // Your Twitter handle
-  twitterCreator: "@yourTwitterHandle", // Twitter creator (if applicable),
-  robots: "index, follow", // Mengizinkan mesin pencari untuk mengindeks dan mengikuti tautan
-  canonical: "https://wibu-dock.ravenstone.cloud", 
+  openGraph: {
+    title: "Wibu Dock",
+    description: "Comprehensive Dock for Wibu web app.",
+    url: "https://wibu-dock.ravenstone.cloud",
+    siteName: "Wibu Dock",
+    images: "/og-image.png",
+    authors: ["makuro", "malik kurosaki"]
+  },
+  robots: {
+    index: false,
+    follow: true,
+    nocache: true,
+    googleBot: {
+      index: true,
+      follow: false,
+      noimageindex: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1
+    }
+  },
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/shortcut-icon.png",
+    apple: "/apple-icon.png",
+    other: {
+      rel: "apple-touch-icon-precomposed",
+      url: "/apple-touch-icon-precomposed.png"
+    }
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Wibu Dock',
+    description: 'Comprehensive Dock for Wibu web app.',
+    siteId: '1467726470533754880',
+    creator: '@makuro',
+    creatorId: '1467726470533754880',
+    images: ['https://wibu-dock.ravenstone.cloud/og-image.png'], // Must be an absolute URL
+  },
+  verification: {
+    google: 'google',
+    yandex: 'yandex',
+    yahoo: 'yahoo',
+    other: {
+      me: ['my-email', 'my-link'],
+    },
+  },
+  category: 'technology',
 };
 
 export default function RootLayout({
