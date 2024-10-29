@@ -3,6 +3,7 @@
 import {
   ActionIcon,
   Box,
+  Button,
   Center,
   Divider,
   Flex,
@@ -33,6 +34,8 @@ import {
   AiOutlineRotateLeft,
   AiOutlineSplitCells
 } from "react-icons/ai";
+import { TbArrowsDiagonalMinimize, TbReload } from "react-icons/tb";
+import { parse } from "tldts";
 import { v4 } from "uuid";
 
 type DataComponent = {
@@ -42,7 +45,7 @@ type DataComponent = {
   size?: number;
   children?: DataComponent[];
   url?: string;
-  minimize?: boolean;
+  visible?: boolean;
 };
 
 const dataComponent: DataComponent = {
@@ -54,13 +57,13 @@ const dataComponent: DataComponent = {
       id: v4(),
       size: 300,
       url: "https://raven-stone2.wibudev.com/",
-      minimize: false
+      visible: true
     },
     {
       id: v4(),
       size: 100,
       url: "https://ninox-fox.wibudev.com/",
-      minimize: false
+      visible: true
     }
   ]
 };
@@ -271,6 +274,78 @@ function toggleDirection(
   return component;
 }
 
+function updateVisible(
+  component: DataComponent,
+  dataId: string,
+  visible: boolean
+): DataComponent {
+  if (component.id === dataId) {
+    // Set component visibility to false jika sesuai dengan `dataId`
+    return { ...component, visible };
+  }
+
+  if (component.children) {
+    // Rekursif untuk memperbarui visibility dari semua child jika mereka ada
+    const updatedChildren = component.children.map((child) =>
+      updateVisible(child, dataId, visible)
+    );
+    return { ...component, children: updatedChildren };
+  }
+
+  return component;
+}
+
+function reloadUrl(component: DataComponent, dataId: string): DataComponent {
+  if (component.id === dataId) {
+    // Set component visibility to false jika sesuai dengan `dataId`
+    return { ...component, url: component.url + "?reload=" + v4() };
+  }
+
+  if (component.children) {
+    // Rekursif untuk memperbarui visibility dari semua child jika mereka ada
+    const updatedChildren = component.children.map((child) =>
+      reloadUrl(child, dataId)
+    );
+    return { ...component, children: updatedChildren };
+  }
+
+  return component;
+}
+
+function getListUnvisibleItem(
+  component: DataComponent
+): { id: string; url: string }[] {
+  // Initialize an array to collect unvisible items
+  const unvisibleItems: { id: string; url: string }[] = [];
+
+  // Helper function to process each component recursively
+  function findUnvisibleItems(comp: DataComponent) {
+    // If the component has children, iterate over them
+    if (comp.children) {
+      for (const child of comp.children) {
+        // Check if the child is visible or not
+        if (!child.visible) {
+          unvisibleItems.push({ id: child.id, url: child.url || "no url" });
+        }
+        // If the child itself has children, call recursively
+        if ("children" in child) {
+          findUnvisibleItems(child as DataComponent);
+        }
+      }
+    }
+  }
+
+  // Start the recursive search with the provided component
+  findUnvisibleItems(component);
+
+  return unvisibleItems;
+}
+
+function getNameUrl(url: string) {
+  const parsed = parse(url);
+  return parsed.subdomain ? parsed.subdomain : parsed.domain || "no name";
+}
+
 export function WibuDock() {
   const [dataLocal, setDataLocal] = useLocalStorage<any>({
     key: "data_component",
@@ -283,6 +358,9 @@ export function WibuDock() {
 
   const [keyId, setKeyId] = useState(_.random(1000, 9999));
   const [isDesktop, setIsDesktop] = useState(true);
+  const [listDataUnvisible, setListDataUnvisible] = useState<
+    { id: string; url: string }[]
+  >([]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -307,6 +385,11 @@ export function WibuDock() {
   }, []);
 
   useShallowEffect(() => {
+    if (dataLocal) {
+      const listUnvisibleItem = getListUnvisibleItem(dataLocal);
+      setListDataUnvisible(listUnvisibleItem);
+    }
+
     const load = setTimeout(() => {
       if (!dataLocal) {
         setDataLocal(_.cloneDeep(dataComponent));
@@ -338,8 +421,8 @@ export function WibuDock() {
       <Center p={"lg"}>
         <Box w={"60%"}>
           <Stack align="center" justify="center">
-            <Image 
-            radius={"lg"}
+            <Image
+              radius={"lg"}
               w={"100%"}
               src={"/assets/desktop-only.png"}
               alt="desktop-only"
@@ -355,6 +438,22 @@ export function WibuDock() {
     <Stack h={"100vh"} w={"100vw"} pos={"fixed"} gap={0}>
       <Flex justify={"space-between"} bg={"dark"} p={4}>
         <Text>Wibu Dock</Text>
+        <Flex gap={"xs"}>
+          {listDataUnvisible.map((item) => (
+            <Button
+              onClick={() => {
+                const updateData = updateVisible(dataLocal, item.id, true);
+                setDataLocal(updateData);
+              }}
+              c={"white"}
+              size="compact-xs"
+              key={item.id}
+              variant="subtle"
+            >
+              {getNameUrl(item.url)}
+            </Button>
+          ))}
+        </Flex>
         <Flex>
           <ActionIcon onClick={onShowPanel} variant="transparent" color="white">
             <Tooltip
@@ -410,6 +509,17 @@ export function WibuDock() {
           const updateData = updateUrl(dataLocal, id, url);
           setDataLocal(updateData);
         }}
+        onMinimize={(id) => {
+          console.log("onMinimize", id);
+          const updateData = updateVisible(dataLocal, id, false);
+          setDataLocal(updateData);
+          // setKeyId(_.random(1000, 9999));
+        }}
+        onReloadUrl={(id) => {
+          const updateData = reloadUrl(dataLocal, id);
+          // console.log(JSON.stringify(updateData, null, 2));
+          setDataLocal(updateData);
+        }}
       />
     </Stack>
   );
@@ -426,7 +536,9 @@ function Component({
   toggleDirection,
   addItemVertical,
   addItemHorizontal,
-  updateUrl
+  updateUrl,
+  onMinimize,
+  onReloadUrl
 }: {
   showPanel: boolean;
   data: DataComponent;
@@ -441,6 +553,8 @@ function Component({
   addItemVertical: (id: string) => void;
   addItemHorizontal: (id: string) => void;
   updateUrl: (id: string, url: string) => void;
+  onMinimize: (id: string) => void;
+  onReloadUrl: (id: string) => void;
 }) {
   const [toggleUpdateUrl, setToggleUpdateUrl] = useState(false);
   const [formUrl, setFormUrl] = useDebouncedState(data.url, 300);
@@ -452,15 +566,16 @@ function Component({
   }, [formUrl]);
   return (
     <Allotment
-      minSize={data.minSize}
+      minSize={50}
       defaultSizes={data.children?.map((item) => item.size || 100)}
       vertical={data.vertical}
       onDragEnd={(sizes: number[]) => onDragEnd(sizes, data.id)}
     >
       {data.children && data.children.length > 0 ? (
         data.children.map((item: DataComponent) => (
-          <Allotment.Pane key={item.id} snap={false}>
+          <Allotment.Pane key={item.id} snap={false} visible={item.visible}>
             <Component
+              onMinimize={onMinimize}
               toggleDirection={(id) => toggleDirection(id)}
               showPanel={showPanel}
               rawData={rawData}
@@ -472,6 +587,7 @@ function Component({
               addItemVertical={(id) => addItemVertical(id)}
               addItemHorizontal={(id) => addItemHorizontal(id)}
               updateUrl={(id, url) => updateUrl(id, url)}
+              onReloadUrl={onReloadUrl}
             />
           </Allotment.Pane>
         ))
@@ -498,6 +614,34 @@ function Component({
               />
             </Flex>
             <Flex>
+              <ActionIcon
+                onClick={() => onReloadUrl(data.id)}
+                variant="transparent"
+                color="white"
+              >
+                <Tooltip
+                  label={"reload"}
+                  openDelay={500}
+                  color="dark"
+                  withArrow
+                >
+                  <TbReload />
+                </Tooltip>
+              </ActionIcon>
+              <ActionIcon
+                onClick={() => onMinimize(data.id)}
+                variant="transparent"
+                color="white"
+              >
+                <Tooltip
+                  label={"minimize"}
+                  openDelay={500}
+                  color="dark"
+                  withArrow
+                >
+                  <TbArrowsDiagonalMinimize />
+                </Tooltip>
+              </ActionIcon>
               <ActionIcon
                 onClick={() => toggleDirection(data.id)}
                 variant="transparent"
@@ -576,6 +720,7 @@ function Component({
             src={data.url}
             width={"100%"}
             height={"100%"}
+            allow="camera; microphone"
           />
           {/* <ScrollArea.Autosize>
             <pre>{JSON.stringify(rawData, null, 2)}</pre>

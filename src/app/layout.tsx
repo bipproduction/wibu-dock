@@ -4,12 +4,13 @@
 import "@mantine/core/styles.css";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import type { Metadata } from "next";
+import { PermissionProvider } from "./lib/permission/PermissionProvider";
 
 export const metadata: Metadata = {
-  generator: 'Wibu Dock',
-  applicationName: 'Wibu Dock',
-  referrer: 'origin-when-cross-origin',
-  keywords: ['Next.js', 'React', 'JavaScript'],
+  generator: "Wibu Dock",
+  applicationName: "Wibu Dock",
+  referrer: "origin-when-cross-origin",
+  keywords: ["Next.js", "React", "JavaScript"],
   metadataBase: new URL("https://wibu-dock.ravenstone.cloud"),
   title: "Wibu Dock",
   description: "Wibu Dock",
@@ -44,23 +45,23 @@ export const metadata: Metadata = {
     }
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'Wibu Dock',
-    description: 'Comprehensive Dock for Wibu web app.',
-    siteId: '1467726470533754880',
-    creator: '@makuro',
-    creatorId: '1467726470533754880',
-    images: ['https://wibu-dock.ravenstone.cloud/og-image.png'], // Must be an absolute URL
+    card: "summary_large_image",
+    title: "Wibu Dock",
+    description: "Comprehensive Dock for Wibu web app.",
+    siteId: "1467726470533754880",
+    creator: "@makuro",
+    creatorId: "1467726470533754880",
+    images: ["https://wibu-dock.ravenstone.cloud/og-image.png"] // Must be an absolute URL
   },
   verification: {
-    google: 'google',
-    yandex: 'yandex',
-    yahoo: 'yahoo',
+    google: "google",
+    yandex: "yandex",
+    yahoo: "yahoo",
     other: {
-      me: ['my-email', 'my-link'],
-    },
+      me: ["my-email", "my-link"]
+    }
   },
-  category: 'technology',
+  category: "technology"
 };
 
 export default function RootLayout({
@@ -71,9 +72,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* <meta
+          http-equiv="Content-Security-Policy"
+          content="default-src 'self'; frame-ancestors 'self'; media-src 'self' https://localhost:3000;"
+        /> */}
         <ColorSchemeScript defaultColorScheme="dark" />
       </head>
       <body>
+        <PermissionProvider />
         <MantineProvider defaultColorScheme="dark">{children}</MantineProvider>
       </body>
     </html>
