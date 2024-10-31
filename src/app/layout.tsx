@@ -4,7 +4,7 @@
 import "@mantine/core/styles.css";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import type { Metadata } from "next";
-import { PermissionProvider } from "./lib/permission/PermissionProvider";
+import { PermissionProvider } from "../lib/permission/PermissionProvider";
 
 export const metadata: Metadata = {
   generator: "Wibu Dock",
