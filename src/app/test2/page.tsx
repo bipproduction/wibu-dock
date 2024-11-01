@@ -3,6 +3,7 @@ import { Button, Stack, TextInput } from "@mantine/core";
 import { useShallowEffect } from "@mantine/hooks";
 import { MediaConnection, Peer } from "peerjs";
 import { useRef, useState } from "react";
+import { v4 } from "uuid";
 
 export default function PageId2() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -13,8 +14,10 @@ export default function PageId2() {
   const [remotePeerId, setRemotePeerId] = useState<string>("id1x");
 
   useShallowEffect(() => {
+    const peerId = v4();
+    console.log("Peer ID:", peerId);
     // Membuat instance Peer untuk id2
-    const peer = new Peer("id2x", {
+    const peer = new Peer(peerId, {
       host: "wibu-stream-server.wibudev.com",
       port: 443,
       secure: true,
