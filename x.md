@@ -1,62 +1,56 @@
-```json
-{
-  "id": "e9654309-3c54-43cc-aab2-5b51f657d6e8",
-  "vertical": false,
-  "minSize": 100,
-  "children": [
-    {
-      "id": "78a8415a-56e8-43fd-b258-79418db41e09",
-      "vertical": true,
-      "minSize": 100,
-      "size": 300,
-      "children": [
-        {
-          "id": "068a9e76-8f09-4db6-9cd3-e62cb4d6420c",
-          "size": 300,
-          "url": "https://mantine.dev/guides/next/"
-        },
-        {
-          "id": "dbc72973-82f2-44b4-beef-679bb873013f",
-          "size": 300,
-          "url": "https://wibu-example.ravenstone.cloud/"
-        },
-        {
-          "id": "657610ec-cb2f-4244-86b2-7d0a1e90d3f0",
-          "size": 300,
-          "url": "https://wibu-example.ravenstone.cloud/"
-        },
-        {
-          "id": "657610ec-cb2f-4244-86b2-7d0a1e90d3f0",
-          "size": 300,
-          "url": "https://example.com"
-        },
-        {
-          "id": "657610ec-cb2f-4244-86b2-7d0a1e90d3f0",
-          "size": 300,
-          "url": "https://example.com"
-        },
-        {
-          "id": "657610ec-cb2f-4244-86b2-7d0a1e90d3f0",
-          "size": 300,
-          "url": "https://example.com"
-        }
-      ]
-    },
-    {
-      "id": "9b6cabee-055e-4915-bcb8-b996d347b214",
-      "size": 100,
-      "url": "https://wibu-example.ravenstone.cloud/"
-    },
-    {
-      "id": "9b6cabee-055e-4915-bcb8-b996d347b214",
-      "size": 100,
-      "url": "https://example.com"
-    },
-    {
-      "id": "9b6cabee-055e-4915-bcb8-b996d347b214",
-      "size": 100,
-      "url": "https://example.com"
-    }
-  ]
-}
-```
+✅ Kegiatan > Detail Kegiatan :: ketika di back tidak mengikuti grup dari data kegiatan tersebut, jadinya malah ke grup default dari user (LayoutIconBack)
+✅ Divisi > Detail Divisi :: ketika di back tidak mengikuti grup dari data divisi tersebut, jadinya malah ke grup default dari user (LayoutIconBack)
+✅ Home > list kegiatan terbaru :: baiknya pada list kegiatan terbaru diberi status dari kegiatan tersebut
+✅ Home > chart proses kegiatan :: klo bisa mah klo ..,00 itu 2 digit aja deh
+✅ Home > Pencarian :: ga ada skeleton 
+✅ Home > Pencarian :: kyk nya agak telat deh 
+✅ Home > Pencarian :: tampilan tidak ada data
+✅ Logout :: loading
+✅ Banner > Hapus banner :: loading
+✅ Tema > Gunakan tema :: loading
+✅ Tema > Hapus tema :: loading
+✅ Group > Tambah grup :: button simpan kurang kebawah 
+✅ Group > Tambah grup :: loading pada tombol simpan
+✅ Group > Edit grup :: button simpan kurang kebawah
+✅ Group > Status grup :: loading
+🚀 Jabatan :: order by name
+✅ Jabatan :: realtime :: selesai
+✅ Jabatan > status :: loading
+✅ Anggota > Detail > Status :: loading
+
+
+✅ Kegiatan > Detail kegiatan :: warna tema blm diganti 
+✅ Kegiatan > Tambah Kegiatan > Pilih anggota :: lemot saat pencarian
+🚀 Kegiatan > Detail kegiatan > list tugas :: kyk nya biarin by created at
+✅ Kegiatan > Detail kegiatan > edit tugas :: blm realtime
+✅ Kegiatan > Detail kegiatan > tambah file :: kyk nya harus kasih loading saat milih file
+✅ Kegiatan > Detail kegiatan > list file :: order by name / created at
+✅ Kegiatan > Detail kegiatan > Tambah anggota :: lemot saat pencarian
+✅ Kegiatan > Detail kegiatan > Tambah anggota :: kyk nya yg selain user login, user dg role supadmin, cosupadmin dan admin tidak usah dimasukkan kedalam list
+✅ Kegiatan > Detail kegiatan > Tambah anggota :: saat pencarian tombol submit ga perlu skeleton -,-
+✅ Kegiatan > Detail kegiatan :: tombol back harus disetting biar ga salah routing 
+✅ Kegiatan > pencarian :: agak lemot yee
+✅ Kegiatan > cancel :: loading
+✅ Kegiatan > cancel :: routing ke detail kegiatan aja ini
+🚀 All > loading nya bisa ga yaa ngikutin tema warna??
+
+
+🚀 Fitur :: router nya kyk nya pake yg router. back aja kali yaa  ??
+✅ Divisi :: tulisan tidak ada data saat tampilan grid
+✅ Detail Divisi :: tombol back divisi harus disetting (klo supadmin pake ?group=...)
+✅ Laporan Divisi :: format tanggal jadi indonesia 
+✅ Laporan Divisi :: progress tugas ketika ,00 diilangin
+✅ Laporan Divisi :: "Tidak ada event"
+✅ Laporan Divisi :: grup nya cuma bisa subadmin aja bro
+✅ Detail Divisi :: Belum ada diganti Tidak ada
+✅ Detail Divisi > Laporan :: progress tugas ketika ,00 diilangin
+✅ Detail Divisi > Laporan :: Tidak ada event
+🚀 Detail Divisi > Info Divisi > Tambah Anggota :: kyk nya nampilin yg user role nya user dan coadmin aja 
+🚀 Detail Divisi > Info Divisi > Tambah Anggota :: pencarian nya lemot bro
+🚀 Detail Divisi > Info Divisi > Tambah Anggota :: blm ada anggota yg dipilih tapi udh bisa keluar modal 
+🚀 Detail Divisi > Info Divisi > Tambah Anggota :: loading
+🚀 Detail Divisi > Info Divisi > Tambah Anggota :: realtime ?????
+🚀 Detail Divisi > Info Divisi > Ganti status anggota :: ga perlu pake skeleton
+🚀 Detail Divisi > Info Divisi > Mengeluarkan anggota :: loading dan load ga perlu pake skeleton
+🚀 Detail Divisi > Info Divisi > Edit :: selesai edit balik ke halaman info divisi 
+✅ Home :: chart progress kegiatan, yg 100 % knp malah jadi 10 -,- (user)

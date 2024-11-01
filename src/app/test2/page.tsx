@@ -1,7 +1,8 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { Stack, Button } from "@mantine/core";
-import { Peer, MediaConnection } from "peerjs";
+import { Button, Stack, TextInput } from "@mantine/core";
+import { useShallowEffect } from "@mantine/hooks";
+import { MediaConnection, Peer } from "peerjs";
+import { useRef, useState } from "react";
 
 export default function PageId2() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -9,8 +10,9 @@ export default function PageId2() {
   const [isCalling, setIsCalling] = useState(false);
   const [callInstance, setCallInstance] = useState<MediaConnection | null>(null);
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  const [remotePeerId, setRemotePeerId] = useState<string>("id1x");
 
-  useEffect(() => {
+  useShallowEffect(() => {
     // Membuat instance Peer untuk id2
     const peer = new Peer("id2x", {
       host: "wibu-stream-server.wibudev.com",
@@ -42,12 +44,13 @@ export default function PageId2() {
       .then((stream) => {
         setLocalStream(stream);
 
-        const call = peerInstance.call("id1x", stream);
+        const call = peerInstance.call(remotePeerId, stream);
 
         if (call) {
           setCallInstance(call);
 
           call.on("stream", (remoteStream) => {
+            console.log("Received remote stream");
             if (videoRef.current) {
               videoRef.current.srcObject = remoteStream;
 
@@ -58,7 +61,7 @@ export default function PageId2() {
                     console.error("Error playing video:", err);
                   }
                 });
-              }, 0);
+              }, 100);
             }
           });
 
@@ -80,7 +83,6 @@ export default function PageId2() {
     }
 
     if (localStream) {
-      // Menghentikan semua track pada stream lokal untuk mematikan kamera dan mikrofon
       localStream.getTracks().forEach((track) => track.stop());
       setLocalStream(null);
     }
@@ -97,6 +99,10 @@ export default function PageId2() {
   return (
     <Stack h={"100vh"} align="center" justify="center">
       <h1>Peer ID2 - Menerima Stream</h1>
+      <TextInput 
+        onChange={(e) => setRemotePeerId(e.target.value)}
+        value={remotePeerId}
+      />
       <Button onClick={handleCall} disabled={isCalling}>
         {isCalling ? "Calling..." : "Call ID1"}
       </Button>
