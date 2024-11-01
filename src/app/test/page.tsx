@@ -7,17 +7,17 @@ import { MediaConnection, Peer } from "peerjs";
 import { useRef, useState } from "react";
 
 export default function PageId1() {
-  const videoRef = useRef<any | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [incomingCall, setIncomingCall] = useState<MediaConnection | null>(null);
   const [streamInstance, setStreamInstance] = useState<MediaStream | null>(null);
 
   useShallowEffect(() => {
     // Membuat instance Peer untuk id1
-    const peer = new Peer("id1", {
+    const peer = new Peer("id1x", {
       host: "wibu-stream-server.wibudev.com",
       port: 443,
       secure: true,
-      path: "/wibu/stream"
+      path: "/wibu/stream",
     });
 
     // Menangani panggilan yang masuk
@@ -34,7 +34,15 @@ export default function PageId1() {
           call.on("stream", (remoteStream) => {
             if (videoRef.current) {
               videoRef.current.srcObject = remoteStream;
-              videoRef.current.play();
+
+              // Pastikan `play()` dipanggil setelah `srcObject` selesai diatur
+              setTimeout(() => {
+                videoRef.current?.play().catch((err) => {
+                  if (err.name !== "AbortError") {
+                    console.error("Error playing video:", err);
+                  }
+                });
+              }, 0);
             }
           });
 
@@ -42,27 +50,18 @@ export default function PageId1() {
           call.on("close", () => {
             endCall(); // Bersihkan sumber daya saat panggilan berakhir
           });
-
-          peer.on("disconnected", () => {
-            endCall(); // Memastikan panggilan berakhir saat koneksi peer terputus
-          });
         })
         .catch((err) => {
           console.error("Failed to get local stream", err);
         });
     });
 
-    peer.on("close", () => {
-      endCall(); // Memastikan panggilan berakhir saat koneksi peer terputus
-    });
-
+    peer.on("disconnected", endCall);
     peer.on("error", (err) => {
       console.error("PeerJS error", err);
+      endCall();
     });
 
-    peer.on("disconnected", () => {
-      endCall(); // Memastikan panggilan berakhir saat koneksi peer terputus
-    });
     return () => {
       peer.destroy();
     };

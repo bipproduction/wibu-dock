@@ -7,20 +7,27 @@ export default function PageId2() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [peerInstance, setPeerInstance] = useState<Peer | null>(null);
   const [isCalling, setIsCalling] = useState(false);
-  const [callInstance, setCallInstance] = useState<MediaConnection | null>(
-    null
-  );
+  const [callInstance, setCallInstance] = useState<MediaConnection | null>(null);
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
 
   useEffect(() => {
     // Membuat instance Peer untuk id2
-    const peer = new Peer("id2", {
+    const peer = new Peer("id2x", {
       host: "wibu-stream-server.wibudev.com",
       port: 443,
       secure: true,
-      path: "/wibu/stream"
+      path: "/wibu/stream",
     });
     setPeerInstance(peer);
+
+    peer.on("error", (err) => {
+      console.error("PeerJS error:", err);
+      handleEndCall(); // Mengakhiri panggilan jika ada error pada PeerJS
+    });
+
+    peer.on("disconnected", () => {
+      handleEndCall(); // Mengakhiri panggilan jika koneksi peer terputus
+    });
 
     return () => {
       peer.destroy();
@@ -29,24 +36,32 @@ export default function PageId2() {
 
   const handleCall = () => {
     if (!peerInstance) return;
-  
+
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
         setLocalStream(stream);
-  
-        const call = peerInstance.call("id1", stream);
-  
+
+        const call = peerInstance.call("id1x", stream);
+
         if (call) {
           setCallInstance(call);
-  
+
           call.on("stream", (remoteStream) => {
             if (videoRef.current) {
               videoRef.current.srcObject = remoteStream;
-              videoRef.current.play();
+
+              // Pastikan `play()` dipanggil setelah `srcObject` selesai diatur
+              setTimeout(() => {
+                videoRef.current?.play().catch((err) => {
+                  if (err.name !== "AbortError") {
+                    console.error("Error playing video:", err);
+                  }
+                });
+              }, 0);
             }
           });
-  
+
           setIsCalling(true);
         } else {
           console.error("Failed to initiate call");
@@ -56,7 +71,6 @@ export default function PageId2() {
         console.error("Failed to get local stream", err);
       });
   };
-  
 
   const handleEndCall = () => {
     if (callInstance) {
