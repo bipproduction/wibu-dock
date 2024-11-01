@@ -1,25 +1,34 @@
-'use client'
-import { useShallowEffect } from "@mantine/hooks";
+"use client";
+import { useEffect } from "react";
 
 export function PermissionProvider() {
-  useShallowEffect(() => {
-    // Fungsi untuk meminta akses kamera dan mikrofon
-    const requestPermissions = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true
-        });
+  useEffect(() => {
+    // Mengecek apakah izin sudah diminta sebelumnya
+    const permissionsRequested = localStorage.getItem("permissionsRequested");
 
-        // Setelah izin diberikan, bisa mematikan stream untuk menghemat sumber daya
-        stream.getTracks().forEach((track) => track.stop());
-      } catch (error) {
-        // Jika izin ditolak
-        console.error("Izin kamera atau mikrofon ditolak", error);
-      }
-    };
+    if (!permissionsRequested) {
+      // Fungsi untuk meminta akses kamera dan mikrofon
+      const requestPermissions = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true
+          });
 
-    requestPermissions();
+          // Setelah izin diberikan, bisa mematikan stream untuk menghemat sumber daya
+          stream.getTracks().forEach((track) => track.stop());
+
+          // Menyimpan status bahwa izin sudah diminta
+          localStorage.setItem("permissionsRequested", "true");
+        } catch (error) {
+          // Jika izin ditolak
+          console.error("Izin kamera atau mikrofon ditolak", error);
+        }
+      };
+
+      requestPermissions();
+    }
   }, []);
+
   return <></>;
 }

@@ -72,10 +72,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* <meta
-          http-equiv="Content-Security-Policy"
-          content="default-src 'self'; frame-ancestors 'self'; media-src 'self' https://localhost:3000;"
-        /> */}
+        <link rel="icon" href="/icon?<generated>" type="image/png" sizes="32x32" />
         <ColorSchemeScript defaultColorScheme="dark" />
       </head>
       <body>
