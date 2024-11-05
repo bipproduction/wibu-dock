@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev-ssl": "next dev --experimental-https",
+    "dev:https": "next dev --experimental-https",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookstate/core": "^4.0.1",
     "@mantine/core": "^7.13.4",
     "@mantine/hooks": "^7.13.4",
     "@types/lodash": "^4.17.12",
