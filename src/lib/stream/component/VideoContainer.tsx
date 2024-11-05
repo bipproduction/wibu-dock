@@ -1,7 +1,6 @@
 import {
   ActionIcon,
   Card,
-  Container,
   Flex,
   Stack
 } from "@mantine/core";
@@ -163,8 +162,8 @@ export function VideoCallContainer({
           <BiVideoOff size={64} />
         </ActionIcon>
       </Flex>
-      <Container display={mediaConnection !== null ? "block" : "none"}>
-        <Card miw={460}>
+      <Stack display={mediaConnection !== null ? "block" : "none"}>
+        <Card>
           <Stack pos={"relative"}>
             <video
               ref={remoteVideoRef}
@@ -185,7 +184,7 @@ export function VideoCallContainer({
             />
           </Stack>
         </Card>
-      </Container>
+      </Stack>
     </Stack>
   );
 }

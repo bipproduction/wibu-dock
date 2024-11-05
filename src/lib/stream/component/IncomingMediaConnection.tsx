@@ -1,7 +1,6 @@
 import {
   Button,
   Card,
-  Container,
   Group,
   Stack,
   Text,
@@ -99,7 +98,7 @@ export function IncomMingMediaConnection({
               Close
             </Button>
           </Group>
-          <Container>
+          <Stack>
             <Card>
               <Stack pos={"relative"}>
                 <video
@@ -121,7 +120,7 @@ export function IncomMingMediaConnection({
                 />
               </Stack>
             </Card>
-          </Container>
+          </Stack>
         </Stack>
       </Card>
     </Stack>
