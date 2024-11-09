@@ -1,9 +1,4 @@
-import {
-  ActionIcon,
-  Card,
-  Flex,
-  Stack
-} from "@mantine/core";
+import { ActionIcon, Flex, Stack } from "@mantine/core";
 import Peer, { MediaConnection } from "peerjs";
 import { useRef, useState } from "react";
 import { BiVideoOff } from "react-icons/bi";
@@ -25,9 +20,6 @@ export function VideoCallContainer({
     useState<MediaStream | null>(null);
   const [mediaConnection, setMediaConnection] =
     useState<MediaConnection | null>(null);
-  // const [loading, setLoading] = useState(false);
-  let playTimeout: NodeJS.Timeout | null = null;
-
 
   function handleClose() {
     if (localMediaStream) {
@@ -74,15 +66,8 @@ export function VideoCallContainer({
   }
 
   async function onVideoCall() {
-    if (!selectedContact) {
-      console.error("No contact selected");
-      return;
-    }
-
-    // setLoading(true);
-
     try {
-      const stream = await findStreamId(selectedContact);
+      const stream = await findStreamId(selectedContact!);
       if (!stream || !stream.isOnline) {
         console.log("Streaming ID not found or user is offline");
         return;
@@ -97,46 +82,45 @@ export function VideoCallContainer({
 
   async function streamingStart(streamId: string) {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true
-      });
-      setLocalMediaStream(stream);
+      navigator.mediaDevices
+        .getUserMedia({
+          video: true,
+          audio: true
+        })
+        .then(async (stream) => {
+          setLocalMediaStream(stream);
 
-      if (localVideoRef.current) {
-        localVideoRef.current.srcObject = stream;
-        localVideoRef.current.style.display = "block";
-        await localVideoRef.current.play();
-      }
+          // if (localVideoRef.current) {
+          //   localVideoRef.current.srcObject = stream;
+          //   await localVideoRef.current.play();
+          // }
 
-      const call = peerConnection?.call(streamId, stream);
-      if (call) {
-        setMediaConnection(call);
-        call.on("stream", (remoteStream) => {
-          setRemoteMediaStream(remoteStream);
-          if (remoteVideoRef.current) {
-            remoteVideoRef.current.srcObject = remoteStream;
-            remoteVideoRef.current.style.display = "block";
-            if (playTimeout) clearTimeout(playTimeout);
-            playTimeout = setTimeout(() => {
-              if (remoteVideoRef.current) {
-                remoteVideoRef.current.play().catch((err) => {
-                  if (err.name !== "AbortError") {
-                    console.error("Error playing remote video:", err);
-                  }
-                });
-              }
-            }, 100);
+          const call = peerConnection?.call(streamId, stream);
+          if (call) {
+            setMediaConnection(call);
+            call.on("stream", async (remoteStream) => {
+              console.log("Received remote stream:", remoteStream.id);
+              // setRemoteMediaStream(remoteStream);
+              // if (remoteVideoRef.current) {
+              //   remoteVideoRef.current.srcObject = remoteStream;
+              //   setTimeout(() => {
+              //     remoteVideoRef.current?.play().catch((err) => {
+              //       if (err.name !== "AbortError") {
+              //         console.error("Error playing remote video:", err);
+              //       }
+              //     });
+              //   }, 10);
+              // }
+            });
+
+            call.on("close", () => {
+              stream.getTracks().forEach((track) => track.stop());
+              remoteMediaStream?.getTracks().forEach((track) => track.stop());
+              setMediaConnection(null);
+              call.close();
+            });
           }
         });
-
-        call.on("close", () => {
-          stream.getTracks().forEach((track) => track.stop());
-          remoteMediaStream?.getTracks().forEach((track) => track.stop());
-          setMediaConnection(null);
-          call.close();
-        });
-      }
     } catch (error) {
       console.error("Error accessing media devices:", error);
     }
@@ -162,29 +146,24 @@ export function VideoCallContainer({
           <BiVideoOff size={64} />
         </ActionIcon>
       </Flex>
-      <Stack display={mediaConnection !== null ? "block" : "none"}>
-        <Card>
-          <Stack pos={"relative"}>
-            <video
-              ref={remoteVideoRef}
-              // controls
-              autoPlay
-              style={{ width: "100%", height: "100%" }}
-            />
-            <video
-              ref={localVideoRef}
-              // controls
-              autoPlay
-              style={{
-                width: "30%",
-                position: "absolute",
-                bottom: "10px",
-                right: "10px"
-              }}
-            />
-          </Stack>
-        </Card>
-      </Stack>
+      {/* <Stack pos={"relative"}>
+        <video
+          ref={remoteVideoRef}
+          autoPlay
+          style={{ width: "100%", height: "100%" }}
+        />
+        <video
+          ref={localVideoRef}
+          autoPlay
+          muted
+          style={{
+            width: "30%",
+            position: "absolute",
+            bottom: "10px",
+            right: "10px"
+          }}
+        />
+      </Stack> */}
     </Stack>
   );
 }

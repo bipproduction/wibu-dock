@@ -30,7 +30,11 @@ export function StreamContainer({ phone }: { phone: string }) {
 
       peerInstance.on("connection", (conn) => setInComingDataConnection(conn));
 
-      peerInstance.on("call", (call) => setInComingMediaConnection(call));
+      peerInstance.on("call", (call) => {
+        if (!inComingMediaConnection) {
+          setInComingMediaConnection(call);
+        }
+      });
       peerInstance.on("disconnected", () => {
         interval = setInterval(() => {
           peerInstance.reconnect();

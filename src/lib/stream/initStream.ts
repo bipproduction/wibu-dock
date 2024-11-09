@@ -1,8 +1,7 @@
 import Peer from "peerjs";
-import { v4 } from "uuid";
 
 export function initStream({ phone }: { phone: string }) {
-  const peerId = `wibu${phone}-` + v4();
+  const peerId = `wibu${phone}-xxxxx-xxxxx`;
   const host = "wibu-stream-server.wibudev.com";
   const port = 443;
   const secure = true;
