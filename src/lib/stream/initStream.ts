@@ -12,7 +12,5 @@ export function initStream({ phone }: { phone: string }) {
     secure,
     path
   });
-
-
   return newPeer;
 }
